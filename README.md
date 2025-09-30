@@ -55,13 +55,18 @@
 ├── 📂 dataset/
 │   ├── 📂 MILK10k_Test_Input/
 │   ├── 📂 MILK10k_Training_Input/
+|   ├── 📂 processed_data/
+|   |    ├── 📄 test_processed.csv
+|   |    ├── 📄 train_processed.csv
 │   ├── 📄 MILK10k_Test_Metadata.csv
 │   ├── 📄 MILK10k_Training_GroundTruth.csv
 │   └── 📄 MILK10k_Training_Supplement.csv
 │
-├── 📓 main.ipynb               # Main notebook for EDA & Preprocessing
+├── 📓 main.py                  # Python Format
+├── 📓 main.ipynb               # Main notebook
 ├── 📄 requirements.txt         # Python dependencies list
 └── 📄 README.md                # This documentation
+├── 🔑 LICENSE                  # MT
 ```
 
 <div align="center">
