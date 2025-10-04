@@ -1,46 +1,50 @@
 <div align="center">
 
-# 🔬 Automatic Skin Cancer Detection
+# 🔬 MILKFusionNet
 
-## *Multimodal Skin Lesion Image Analysis*
+### *Multimodal Deep Learning Ensemble for Intelligent Skin Lesion Classification*
 
-<img src="https://img.shields.io/badge/Domain-Computer%20Vision%20%26%20AI-blueviolet?style=for-the-badge&logo=tensorflow" alt="Domain"/>
-<img src="https://img.shields.io/badge/Dataset-MILK--10k-orange?style=for-the-badge&logo=kaggle" alt="Dataset"/>
-<img src="https://img.shields.io/badge/Type-Image%20Classification-blue?style=for-the-badge&logo=imagej" alt="Type"/>
-<img src="https://img.shields.io/badge/Language-Python-yellow?style=for-the-badge&logo=python" alt="Language"/>
+![Status](https://img.shields.io/badge/Status-In%20Progress-yellow?style=for-the-badge&logo=github)
+![Framework](https://img.shields.io/badge/Framework-PyTorch-EE4C2C?style=for-the-badge&logo=pytorch)
+![Dataset](https://img.shields.io/badge/Dataset-ISIC%20MILK--10k-00D4FF?style=for-the-badge&logo=kaggle)
+![Language](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 
----
-
-*A research project to develop a deep learning model capable of classifying skin cancer types from medical images.*
+**[Dataset](https://challenge.isic-archive.com/data/#milk10k)** • **[Documentation](#-getting-started)** • **[Architecture](#-architecture)** • **[License](#-license)**
 
 </div>
 
-## 🎯 **Overview**
+---
 
-> This project aims to build an intelligent system that can **automatically detect and classify seven different types of skin lesions**, including malignant lesions such as Melanoma (MEL) and Basal Cell Carcinoma (BCC). By leveraging the **MILK-10k** multimodal image dataset, this system is designed to serve as a diagnostic support tool for medical professionals.
+## 🎯 Overview
+
+**MILKFusionNet** represents a cutting-edge approach to automated skin lesion classification, leveraging the power of multimodal deep learning. By harmoniously combining dermoscopic images, clinical photographs, and tabular metadata from the **ISIC MILK-10k** dataset, this system delivers enhanced diagnostic support for medical professionals.
+
+> **Mission:** Democratizing early skin cancer detection through AI-powered precision, reducing diagnostic subjectivity, and bridging healthcare accessibility gaps worldwide.
+
+---
+
+## 💡 The Challenge
+
+Skin cancer, particularly melanoma, remains a critical global health concern with high mortality rates when diagnosed late. Current diagnostic paradigms face several limitations:
 
 <table>
 <tr>
-<td width="50%">
+<td width="33%" align="center">
 
-### 📊 **Project Specifications**
-
-- **📚 Dataset**: MILK-10k
-- **🧠 Domain**: Medical AI, Computer Vision
-- **🎯 Focus**: Skin Cancer Classification
-- **🖼️ Total Images**: 10,000+
-- **🐍 Libraries**: Pandas, Seaborn, Matplotlib, PIL
-- **📓 Environment**: Jupyter Notebook
+### 🎭 Subjectivity
+Heavy reliance on dermatologist experience with limited availability in underserved regions
 
 </td>
-<td width="50%">
+<td width="33%" align="center">
 
-### 🔗 **Quick Links**
+### 📊 Data Imbalance
+Severe class imbalance in medical datasets causing model bias toward common conditions
 
-- 📂 **[Dataset Folder](dataset/)**
-- 📓 **[Analysis Notebook (EDA)](main.ipynb)**
-- 📝 **[Dependencies](requirements.txt)**
-- 📜 **[MIT License](LICENSE)**
+</td>
+<td width="33%" align="center">
+
+### 🔍 Unimodal Limitations
+Most AI systems analyze single image types, missing contextual clinical information
 
 </td>
 </tr>
@@ -48,196 +52,240 @@
 
 ---
 
-## 📁 **Repository Structure**
+## 🏗️ Architecture
 
-```
-📦 Automatic-Skin-Cancer-Detection/
-├── 📂 dataset/
-│   ├── 📂 MILK10k_Test_Input/
-│   ├── 📂 MILK10k_Training_Input/
-|   ├── 📂 processed_data/
-|   |    ├── 📄 test_processed.csv
-|   |    ├── 📄 train_processed.csv
-│   ├── 📄 MILK10k_Test_Metadata.csv
-│   ├── 📄 MILK10k_Training_GroundTruth.csv
-│   └── 📄 MILK10k_Training_Supplement.csv
-│
-├── 📓 main.py                  # Python Format
-├── 📓 main.ipynb               # Main notebook
-├── 📄 requirements.txt         # Python dependencies list
-└── 📄 README.md                # This documentation
-├── 🔑 LICENSE                  # MT
-```
-
-<div align="center">
-
-### 🏗️ **Project Workflow**
+MILKFusionNet employs a **two-phase ensemble strategy** that orchestrates multiple deep learning architectures:
 
 ```mermaid
-graph TD
-    A[📚 MILK-10k Dataset] --> B[🔍 Data Exploration EDA];
-    B --> C[🖼️ Image Preprocessing];
-    C --> D{Preprocessing Steps};
-    D --> E[🔄 Resizing & Normalization];
-    E --> F[🤖 Model Development];
-    F --> G[⚙️ Training & Validation];
-    G --> H[📈 Performance Evaluation];
-    H --> I[🎯 Prediction & Classification];
+graph TD;
+    subgraph "Phase 1: Model Competition"
+        A1[Dermoscopic Images] --> B1(EfficientNet-B3);
+        A1 --> B2(Swin Transformer);
+        B1 & B2 --> C1{Select Champion};
+
+        A2[Clinical Images] --> D1(ResNet50);
+        A2 --> D2(ViT-B16);
+        D1 & D2 --> C2{Select Champion};
+        
+        A3[Tabular Metadata] --> E1(TabTransformer);
+    end
+
+    subgraph "Phase 2: Stacking Ensemble"
+        C1 -- OOF Predictions --> G[Fusion Layer];
+        C2 -- OOF Predictions --> G;
+        E1 -- OOF Predictions --> G;
+        G --> H[Meta-Classifier MLP];
+        H --> I[Final Prediction];
+    end
+    
+    style A1 fill:#6366f1
+    style A2 fill:#8b5cf6
+    style A3 fill:#ec4899
+    style I fill:#10b981
 ```
 
-</div>
+### 🎨 Design Philosophy
 
-## 📊 **Metadata Specifications (`GroundTruth.csv`)**
-
-The metadata file contains labels for each image, encoded in *one-hot encoding* format.
-
-<div align="center">
-<table>
-<thead>
-<tr style="background: linear-gradient(45deg, #02aab0 0%, #00cdac 100%); color: white;">
-<th>🏷️ Field</th>
-<th>📝 Description</th>
-<th>📄 Data Type</th>
-<th>📊 Example Data</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>lesion_id</strong></td>
-<td>Unique ID for each skin lesion</td>
-<td>String</td>
-<td>IL_0000000</td>
-</tr>
-<tr style="background-color: #f8f9fa;">
-<td><strong>AKIEC</strong></td>
-<td>Actinic Keratoses</td>
-<td>Float (0.0/1.0)</td>
-<td>1.0</td>
-</tr>
-<tr>
-<td><strong>BCC</strong></td>
-<td>Basal Cell Carcinoma</td>
-<td>Float (0.0/1.0)</td>
-<td>0.0</td>
-</tr>
-<tr style="background-color: #f8f9fa;">
-<td><strong>BKL</strong></td>
-<td>Benign Keratosis-like Lesions</td>
-<td>Float (0.0/1.0)</td>
-<td>0.0</td>
-</tr>
-<tr>
-<td><strong>DF</strong></td>
-<td>Dermatofibroma</td>
-<td>Float (0.0/1.0)</td>
-<td>0.0</td>
-</tr>
-<tr style="background-color: #f8f9fa;">
-<td><strong>MEL</strong></td>
-<td>Melanoma</td>
-<td>Float (0.0/1.0)</td>
-<td>0.0</td>
-</tr>
-<tr>
-<td><strong>NV</strong></td>
-<td>Melanocytic Nevi</td>
-<td>Float (0.0/1.0)</td>
-<td>0.0</td>
-</tr>
-<tr style="background-color: #f8f9fa;">
-<td><strong>VASC</strong></td>
-<td>Vascular Lesions</td>
-<td>Float (0.0/1.0)</td>
-<td>0.0</td>
-</tr>
-</tbody>
-</table>
-</div>
-
-## 🚀 **Potential Applications**
-
-<div align="center">
-<table>
-<tr>
-<td align="center" width="25%">
-<img src="https://img.shields.io/badge/-🩺-4A90E2?style=for-the-badge" alt="Diagnosis"/>
-<h4><strong>Diagnostic Support Tool</strong></h4>
-<p><em>Assists dermatologists in early screening and identification of suspicious lesions.</em></p>
-</td>
-<td align="center" width="25%">
-<img src="https://img.shields.io/badge/-📱-50E3C2?style=for-the-badge" alt="Telemedicine"/>
-<h4><strong>Telemedicine Application</strong></h4>
-<p><em>Integration into digital health platforms for remote consultations.</em></p>
-</td>
-<td align="center" width="25%">
-<img src="https://img.shields.io/badge/-📈-F5A623?style=for-the-badge" alt="Research"/>
-<h4><strong>Medical Research</strong></h4>
-<p><em>Foundation for analyzing skin disease trends and developing new detection methods.</em></p>
-</td>
-<td align="center" width="25%">
-<img src="https://img.shields.io/badge/-🎓-BD10E0?style=for-the-badge" alt="Education"/>
-<h4><strong>Public Education</strong></h4>
-<p><em>Raising public awareness about the importance of early skin cancer detection.</em></p>
-</td>
-</tr>
-</table>
-</div>
-
-## 🛠️ **Methodology**
-
-<div align="center">
-
-### 🔄 **Data Preprocessing Pipeline**
-
-```
-📥 Raw Image Input → 🖼️ Resize → 🎨 Color Conversion → 🔢 Pixel Normalization → ✅ Training-Ready Output
-```
-
-</div>
-
-> **Key Process**: Each image in the dataset undergoes a series of crucial preprocessing steps to ensure consistency and improve model performance. This process is standardized for all images, both clinical and dermoscopic.
-
-<details>
-<summary><strong>🔍 Preprocessing Steps Details</strong></summary>
-
-- ✅ **Image Resizing**: All images are resized to uniform dimensions (e.g., 224x224 pixels) to meet model input requirements.
-- ✅ **Color Conversion**: Ensures all images are in a consistent color format (RGB).
-- ✅ **Pixel Normalization**: Image pixel values (originally 0-255) are normalized to a smaller range (e.g., 0-1) to stabilize the training process.
-
-</details>
-
-## 👤 **Researcher**
-
-<div align="center">
-<table>
-<tr>
-<td align="center" width="100%">
-<img src="https://img.shields.io/badge/-👨‍🔬-0066CC?style=for-the-badge" alt="Researcher"/>
-<br>
-<strong>Bayu Ardiyansyah</strong>
-</td>
-</tr>
-</table>
-</div>
-
-## 📜 **License**
-
-<div align="center">
-
-[![MIT License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
-
-</div>
-
-> This project is licensed under the MIT License. You are free to use, modify, and distribute this code for any purpose, whether commercial or non-commercial.
-
-<div align="center">
-
-### 🤝 **Contributions & Feedback**
-
-*This is an independent research initiative. Suggestions, criticisms, or collaboration opportunities are highly appreciated. Please open an issue or contact the researcher directly.*
+| Component | Purpose | Technology |
+|:----------|:--------|:-----------|
+| **CNN Models** | Capture spatial hierarchies & local patterns | EfficientNet-B3, ResNet50 |
+| **Transformers** | Model global context & long-range dependencies | Swin Transformer, ViT-B16 |
+| **Tabular Model** | Process patient metadata & clinical markers | TabTransformer |
+| **Meta-Learner** | Intelligent probability fusion & final decision | Multi-Layer Perceptron |
 
 ---
 
-<sub>🔬 **Disclaimer**: This system is a research support tool and **not** a substitute for professional medical diagnosis. All results provided by the model must be verified by qualified medical personnel.</sub>
+## 📂 Project Structure
+
+```
+📦 MILKFusionNet/
+│
+├── 📂 dataset/                      # Raw data (git-ignored)
+│   ├── MILK10k_Test_Input/
+│   └── MILK10k_Training_Input/
+│
+├── 📂 processed_data/               # Preprocessed datasets
+│   └── train_processed.csv
+│
+├── 📂 notebooks/                    # Jupyter notebooks
+│   └── main.ipynb                   # Main analysis pipeline
+│
+├── 📂 src/                          # Source code modules
+│   ├── dataset.py                   # Dataset loaders
+│   ├── model.py                     # Model architectures
+│   └── utils.py                     # Utility functions
+│
+├── 📂 configs/                      # Configuration files
+│   └── training_config.yaml
+│
+├── 📄 requirements.txt              # Python dependencies
+├── 📄 LICENSE                       # MIT License
+└── 📄 README.md                     # This file
+```
+
+---
+
+## 🛠️ Methodology
+
+### Preprocessing Pipeline
+
+Our preprocessing strategy is meticulously designed based on empirical analysis:
+
+<table>
+<tr>
+<th width="25%">Technique</th>
+<th width="40%">Rationale</th>
+<th width="35%">Implementation</th>
+</tr>
+
+<tr>
+<td><b>🖼️ Resizing</b></td>
+<td>Standardizes input dimensions for efficient batch processing</td>
+<td><code>Resize(224, 224)</code></td>
+</tr>
+
+<tr>
+<td><b>✨ CLAHE</b></td>
+<td>Adaptive histogram equalization enhances local contrast</td>
+<td><code>CLAHE(clip_limit=3.0)</code></td>
+</tr>
+
+<tr>
+<td><b>🎲 Augmentation</b></td>
+<td>Synthetic data diversity prevents overfitting</td>
+<td><code>HorizontalFlip, Rotate, ColorJitter</code></td>
+</tr>
+
+<tr>
+<td><b>📏 Normalization</b></td>
+<td>Accelerates convergence & stabilizes training</td>
+<td><code>Normalize(ImageNet stats)</code></td>
+</tr>
+</table>
+
+### Training Strategy
+
+- **Loss Function:** Focal Loss (γ=2, α=0.25) for severe class imbalance
+- **Optimizer:** AdamW with weight decay (1e-4)
+- **Scheduler:** ReduceLROnPlateau (patience=5, factor=0.5)
+- **Cross-Validation:** 5-fold stratified CV for robust evaluation
+- **Early Stopping:** Patience of 10 epochs on validation loss
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+```bash
+Python 3.8+
+PyTorch 2.0+
+CUDA 11.8+ (recommended)
+16GB+ RAM
+```
+
+### Installation
+
+**1. Clone the repository**
+```bash
+git clone https://github.com/username/MILKFusionNet.git
+cd MILKFusionNet
+```
+
+**2. Create virtual environment**
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+**3. Install dependencies**
+```bash
+pip install -r requirements.txt
+```
+
+**4. Download dataset**
+- Visit [ISIC MILK-10k Challenge](https://challenge.isic-archive.com/data/#milk10k)
+- Extract files into `dataset/` directory
+
+### Quick Start
+
+**Run the complete pipeline:**
+```bash
+jupyter notebook notebooks/main.ipynb
+```
+
+**Or execute individual components:**
+```python
+from src.dataset import MILKDataset
+from src.model import MILKFusionNet
+
+# Load and preprocess data
+dataset = MILKDataset(root='dataset/', transform=get_transforms())
+
+# Initialize model
+model = MILKFusionNet(num_classes=11)
+
+# Train ensemble
+model.fit(dataset, epochs=50, cv_folds=5)
+```
+
+---
+
+## 📊 Expected Results
+
+| Metric | Target | Clinical Significance |
+|:-------|:------:|:---------------------|
+| **Accuracy** | >85% | Overall diagnostic precision |
+| **Balanced Accuracy** | >80% | Performance across rare classes |
+| **Sensitivity (Melanoma)** | >90% | Critical for early cancer detection |
+| **Specificity** | >88% | Reduces false positive burden |
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these guidelines:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 👨‍🔬 Author
+
+**Bayu Ardiyansyah**
+
+[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github)](https://github.com/username)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/username)
+[![Email](https://img.shields.io/badge/Email-EA4335?style=for-the-badge&logo=gmail&logoColor=white)](mailto:your.email@example.com)
+
+---
+
+## 📜 License
+
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## ⚠️ Disclaimer
+
+<div align="center">
+
+> **IMPORTANT:** MILKFusionNet is a research prototype and **NOT** a certified medical diagnostic tool. 
+> 
+> All predictions must be validated by qualified healthcare professionals. This system is designed to augment, not replace, clinical expertise.
+
+</div>
+
+---
+
+<div align="center">
+
+### 🌟 If you find this project useful, please consider giving it a star!
+
+**Made with ❤️ for advancing healthcare AI**
 
 </div>
