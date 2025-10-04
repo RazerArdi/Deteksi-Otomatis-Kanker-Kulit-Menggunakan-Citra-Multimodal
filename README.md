@@ -56,10 +56,6 @@ Most AI systems analyze single image types, missing contextual clinical informat
 
 MILKFusionNet employs a **two-phase ensemble strategy** that orchestrates multiple deep learning architectures:
 
-<details>
-<summary><b>📊 Click to view interactive architecture diagram</b></summary>
-
-<br>
 
 ```mermaid
 graph TD;
