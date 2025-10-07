@@ -286,37 +286,37 @@ The dataset includes comprehensive patient and lesion metadata:
 ```
 📦 MILKFusionNet/
 │
-├── 📂 dataset/                  # Data mentah (TIDAK TERMASUK DALAM GIT)
+├── 📂 dataset/                  # Raw data (git-ignored)
 │   ├── 📂 MILK10k_Test_Input/
 │   ├── 📂 MILK10k_Training_Input/
 │   ├── 📄 MILK10k_Test_Metadata.csv
 │   ├── 📄 MILK10k_Training_GroundTruth.csv
 │   └── 📄 MILK10k_Training_Metadata.csv
 │
-├── 📂 processed_data/           # File manifest hasil olahan data tabular
+├── 📂 processed_data/           # Processed tabular data manifests
 │   ├── 📄 train_processed.csv
 │   ├── 📄 test_processed.csv
-│   └── 📄 train_disk_processed.csv # Manifest untuk gambar yang disimpan di disk
+│   └── 📄 train_disk_processed.csv # Manifest for on-disk processed images
 │
-├── 📂 processed_images/         # Gambar hasil pra-pemrosesan (TIDAK TERMASUK DALAM GIT)
+├── 📂 processed_images/         # Preprocessed images (git-ignored)
 │   └── 📂 train/
 │       ├── 📂 clinical/
 │       └── 📂 dermoscopic/
 │
-├── 📂 notebooks/                # Berisi semua file Jupyter Notebook
-│   └── 📄 main.ipynb            # Notebook utama untuk analisis & pemodelan
+├── 📂 notebooks/                # Contains all Jupyter Notebooks
+│   └── 📄 main.ipynb            # Main notebook for analysis & modeling
 │
-├── 📂 src/                      # Skrip Python (jika ada)
-│   ├── 📄 dataset.py            # Kelas dan fungsi untuk memuat data
-│   ├── 📄 model.py              # Definisi arsitektur model
-│   └── 📄 utils.py              # Fungsi-fungsi pembantu
+├── 📂 src/                      # Python source scripts
+│   ├── 📄 dataset.py            # Classes and functions for data loading
+│   ├── 📄 model.py              # Model architecture definitions
+│   └── 📄 utils.py              # Helper functions
 │
-├── 📂 configs/                  # File konfigurasi (opsional)
+├── 📂 configs/                  # Configuration files (optional)
 │   └── 📄 training_config.yaml
 │
-├── 📄 requirements.txt         # Daftar dependensi Python
-├── 📄 LICENSE                  # Lisensi proyek
-└── 📄 README.md                # Dokumentasi ini
+├── 📄 requirements.txt         # Python dependencies list
+├── 📄 LICENSE                  # Project license
+└── 📄 README.md                # This documentation file
 ```
 
 ---
