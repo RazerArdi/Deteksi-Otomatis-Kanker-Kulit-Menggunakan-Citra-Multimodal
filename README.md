@@ -284,29 +284,40 @@ The dataset includes comprehensive patient and lesion metadata:
 ## 📂 Project Structure
 
 ```
+```
 📦 MILKFusionNet/
 │
-├── 📂 dataset/                      # Raw data (git-ignored)
-│   ├── MILK10k_Test_Input/
-│   └── MILK10k_Training_Input/
+├── 📂 dataset/                  # Data mentah (TIDAK TERMASUK DALAM GIT)
+│   ├── 📂 MILK10k_Test_Input/
+│   ├── 📂 MILK10k_Training_Input/
+│   ├── 📄 MILK10k_Test_Metadata.csv
+│   ├── 📄 MILK10k_Training_GroundTruth.csv
+│   └── 📄 MILK10k_Training_Metadata.csv
 │
-├── 📂 processed_data/               # Preprocessed datasets
-│   └── train_processed.csv
+├── 📂 processed_data/           # File manifest hasil olahan data tabular
+│   ├── 📄 train_processed.csv
+│   ├── 📄 test_processed.csv
+│   └── 📄 train_disk_processed.csv # Manifest untuk gambar yang disimpan di disk
 │
-├── 📂 notebooks/                    # Jupyter notebooks
-│   └── main.ipynb                   # Main analysis pipeline
+├── 📂 processed_images/         # Gambar hasil pra-pemrosesan (TIDAK TERMASUK DALAM GIT)
+│   └── 📂 train/
+│       ├── 📂 clinical/
+│       └── 📂 dermoscopic/
 │
-├── 📂 src/                          # Source code modules
-│   ├── dataset.py                   # Dataset loaders
-│   ├── model.py                     # Model architectures
-│   └── utils.py                     # Utility functions
+├── 📂 notebooks/                # Berisi semua file Jupyter Notebook
+│   └── 📄 main.ipynb            # Notebook utama untuk analisis & pemodelan
 │
-├── 📂 configs/                      # Configuration files
-│   └── training_config.yaml
+├── 📂 src/                      # Skrip Python (jika ada)
+│   ├── 📄 dataset.py            # Kelas dan fungsi untuk memuat data
+│   ├── 📄 model.py              # Definisi arsitektur model
+│   └── 📄 utils.py              # Fungsi-fungsi pembantu
 │
-├── 📄 requirements.txt              # Python dependencies
-├── 📄 LICENSE                       # MIT License
-└── 📄 README.md                     # This file
+├── 📂 configs/                  # File konfigurasi (opsional)
+│   └── 📄 training_config.yaml
+│
+├── 📄 requirements.txt         # Daftar dependensi Python
+├── 📄 LICENSE                  # Lisensi proyek
+└── 📄 README.md                # Dokumentasi ini
 ```
 
 ---
