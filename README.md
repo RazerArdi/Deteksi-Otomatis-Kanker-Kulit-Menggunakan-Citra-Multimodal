@@ -65,28 +65,28 @@ The project is structured into three parallel experimental workflows:
 graph TD;
     subgraph "Workflow A: Classic ML"
         A1[Input Image] --> B1[Preprocessing: Resize + CLAHE];
-        B1 --> C1[Feature Extraction];
-        C1 --> D1[30 Features: RGB, HSV, GLCM, HOG, LBP];
-        D1 --> E1[Imbalance Handling: SMOTE / Class Weights];
-        E1 --> F1[Models: SVC, RF, LogReg, KNN, GNB];
+        B1 --> C1["Feature Extraction"];
+        C1 --> D1["30 Features: RGB, HSV, GLCM, HOG, LBP"];
+        D1 --> E1["Imbalance Handling: SMOTE / Class Weights"];
+        E1 --> F1["Models: SVC, RF, LogReg, KNN, GNB"];
     end
 
     subgraph "Workflow B: CNNs (LoRA)"
-        A2[Input Image] --> B2[Augmentation + Normalization];
-        B2 --> C2[Backbone: ResNet50 / VGG16 / EfficientNet];
-        C2 --> D2[Inject LoRA Adapters];
-        D2 --> F2[Fine-Tuning (Low Rank)];
+        A2["Input Image"] --> B2["Augmentation + Normalization"];
+        B2 --> C2["Backbone: ResNet50 / VGG16 / EfficientNet"];
+        C2 --> D2["Inject LoRA Adapters"];
+        D2 --> F2["Fine-Tuning (Low Rank)"];
     end
 
     subgraph "Workflow C: Transformers (LoRA)"
-        A3[Input Image] --> B3[Augmentation + Normalization];
-        B3 --> C3[Backbone: ViT / Swin / MaxViT];
-        C3 --> D3[Inject LoRA Adapters];
-        D3 --> F3[Fine-Tuning (Low Rank)];
+        A3["Input Image"] --> B3["Augmentation + Normalization"];
+        B3 --> C3["Backbone: ViT / Swin / MaxViT"];
+        C3 --> D3["Inject LoRA Adapters"];
+        D3 --> F3["Fine-Tuning (Low Rank)"];
     end
 
-    F1 & F2 & F3 --> G[🏆 Grand Final Analysis];
-    G --> H[Confusion Matrix & ECE Calibration];
+    F1 & F2 & F3 --> G["🏆 Grand Final Analysis"];
+    G --> H["Confusion Matrix & ECE Calibration"];
 ```
 
 ---
