@@ -2,14 +2,15 @@
 
 # 🔬 MILKFusionNet
 
-### *Multimodal Deep Learning Ensemble for Intelligent Skin Lesion Classification*
+### *Comparative Framework: Classic ML vs. CNNs vs. Transformers with PEFT/LoRA*
 
-![Status](https://img.shields.io/badge/Status-In%20Progress-yellow?style=for-the-badge&logo=github)
-![Framework](https://img.shields.io/badge/Framework-PyTorch-EE4C2C?style=for-the-badge&logo=pytorch)
+![Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge&logo=github)
+![Framework](https://img.shields.io/badge/Framework-PyTorch_%7C_Scikit--Learn-EE4C2C?style=for-the-badge&logo=pytorch)
+![Technique](https://img.shields.io/badge/Technique-LoRA_%7C_Feature_Eng-violet?style=for-the-badge&logo=huggingface)
 ![Dataset](https://img.shields.io/badge/Dataset-ISIC%20MILK--10k-00D4FF?style=for-the-badge&logo=kaggle)
 ![Language](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 
-**[Dataset](https://challenge.isic-archive.com/data/#milk10k)** • **[Documentation](#-getting-started)** • **[Architecture](#-architecture)** • **[License](#-license)**
+**[Dataset](https://challenge.isic-archive.com/data/#milk10k)** • **[Documentation](#-getting-started)** • **[Methodology](#-methodology)** • **[License](#-license)**
 
 </div>
 
@@ -17,9 +18,13 @@
 
 ## 🎯 Overview
 
-**MILKFusionNet** represents a cutting-edge approach to automated skin lesion classification, leveraging the power of multimodal deep learning. By harmoniously combining dermoscopic images, clinical photographs, and tabular metadata from the **ISIC MILK-10k** dataset, this system delivers enhanced diagnostic support for medical professionals.
+**MILKFusionNet** is a robust research framework designed to benchmark and analyze skin lesion classification strategies on the **ISIC MILK-10k** dataset. Moving beyond simple classification, this project rigorously compares three distinct paradigms:
 
-> **Mission:** Democratizing early skin cancer detection through AI-powered precision, reducing diagnostic subjectivity, and bridging healthcare accessibility gaps worldwide.
+1.  **Classic Machine Learning:** Interpretable models using hand-crafted feature engineering (RGB, GLCM, HOG, HSV, LBP).
+2.  **Deep Learning (CNNs):** State-of-the-art convolutional networks adapted via **LoRA (Low-Rank Adaptation)**.
+3.  **Vision Transformers:** Modern attention-based architectures adapted via **LoRA (PEFT)**.
+
+> **Core Objective:** To evaluate whether modern Parameter-Efficient Fine-Tuning (PEFT) techniques on heavy architectures outperform traditional feature-based learning in scenarios with high class imbalance.
 
 ---
 
@@ -52,62 +57,92 @@ Most AI systems analyze single image types, missing contextual clinical informat
 
 ---
 
-## 🏗️ Architecture
+## 🏗️ Architecture & Workflows
 
-MILKFusionNet employs a **two-phase ensemble strategy** that orchestrates multiple deep learning architectures:
-
+The project is structured into three parallel experimental workflows:
 
 ```mermaid
 graph TD;
-    subgraph "Phase 1: Model Competition"
-        A1[Dermoscopic Images] --> B1(EfficientNet-B3);
-        A1 --> B2(Swin Transformer);
-        B1 & B2 --> C1{Select Champion};
-
-        A2[Clinical Images] --> D1(ResNet50);
-        A2 --> D2(ViT-B16);
-        D1 & D2 --> C2{Select Champion};
-        
-        A3[Tabular Metadata] --> E1(TabTransformer);
+    subgraph "Workflow A: Classic ML"
+        A1[Input Image] --> B1[Preprocessing: Resize + CLAHE];
+        B1 --> C1[Feature Extraction];
+        C1 --> D1[30 Features: RGB, HSV, GLCM, HOG, LBP];
+        D1 --> E1[Imbalance Handling: SMOTE / Class Weights];
+        E1 --> F1[Models: SVC, RF, LogReg, KNN, GNB];
     end
 
-    subgraph "Phase 2: Stacking Ensemble"
-        C1 -- OOF Predictions --> G[Fusion Layer];
-        C2 -- OOF Predictions --> G;
-        E1 -- OOF Predictions --> G;
-        G --> H[Meta-Classifier MLP];
-        H --> I[Final Prediction];
+    subgraph "Workflow B: CNNs (LoRA)"
+        A2[Input Image] --> B2[Augmentation + Normalization];
+        B2 --> C2[Backbone: ResNet50 / VGG16 / EfficientNet];
+        C2 --> D2[Inject LoRA Adapters];
+        D2 --> F2[Fine-Tuning (Low Rank)];
     end
-    
-    style A1 fill:#6366f1
-    style A2 fill:#8b5cf6
-    style A3 fill:#ec4899
-    style I fill:#10b981
+
+    subgraph "Workflow C: Transformers (LoRA)"
+        A3[Input Image] --> B3[Augmentation + Normalization];
+        B3 --> C3[Backbone: ViT / Swin / MaxViT];
+        C3 --> D3[Inject LoRA Adapters];
+        D3 --> F3[Fine-Tuning (Low Rank)];
+    end
+
+    F1 & F2 & F3 --> G[🏆 Grand Final Analysis];
+    G --> H[Confusion Matrix & ECE Calibration];
 ```
 
-</details>
+---
 
-<br>
+## 🛠️ Methodology
 
-<div align="center">
+### 1. Workflow A: Classic Feature Engineering 🧑‍🔬
 
-| 🎯 **Phase 1: Model Competition** | 🔗 **Phase 2: Ensemble Fusion** |
-|:----------------------------------|:--------------------------------|
-| Train CNN & Transformer models separately for each modality | Combine champion predictions using intelligent meta-learning |
-| **Dermoscopic:** EfficientNet-B3 vs Swin Transformer | **Fusion Layer:** Concatenates probability vectors |
-| **Clinical:** ResNet50 vs ViT-B16 | **Meta-Classifier:** MLP learns optimal combination |
-| **Tabular:** TabTransformer for metadata | **Output:** Final prediction across 11 classes |
+Instead of raw pixels, we extract interpretable dermoscopic features to train lightweight classifiers.
 
-</div>
+| Feature Set | Count | Description |
+|:---|:---:|:---|
+| **Color (RGB)** | 12 | Mean, Std, Skew, Kurtosis per channel |
+| **Color (HSV)** | 6 | Mean, Std for Hue, Saturation, Value |
+| **Texture (GLCM)** | 6 | Contrast, Correlation, Energy, Homogeneity, ASM, Dissimilarity |
+| **Texture (LBP)** | 3 | Local Binary Patterns (Micro-texture) statistics |
+| **Shape (HOG)** | 3 | Histogram of Oriented Gradients statistics |
+| **Total** | **30** | Standardized features |
 
-### 🎨 Design Philosophy
+* **Handling Imbalance:** Comparative study between `Class Weights` and `SMOTE` (Synthetic Minority Over-sampling).
 
-| Component | Purpose | Technology |
-|:----------|:--------|:-----------|
-| **CNN Models** | Capture spatial hierarchies & local patterns | EfficientNet-B3, ResNet50 |
-| **Transformers** | Model global context & long-range dependencies | Swin Transformer, ViT-B16 |
-| **Tabular Model** | Process patient metadata & clinical markers | TabTransformer |
-| **Meta-Learner** | Intelligent probability fusion & final decision | Multi-Layer Perceptron |
+### 2. Workflows B & C: Deep Learning with PEFT 🚀
+
+We utilize **LoRA (Low-Rank Adaptation)** to fine-tune massive pre-trained models efficiently. By freezing the pre-trained backbone and only training rank-decomposition matrices, we reduce trainable parameters by >90% while preventing catastrophic forgetting.
+
+| Architecture Type | Models Evaluated | Technique |
+|:---|:---|:---|
+| **CNN** | ResNet-50, VGG-16, EfficientNet-B0 | LoRA on Conv/Linear layers |
+| **Transformer** | ViT-B/16, Swin-T, MaxViT-T | LoRA on Attention (qkv) & MLP |
+
+**Training Config:**
+
+* **Optimizer:** Adam (CNN) / AdamW (Transformer)
+* **Loss:** CrossEntropyLoss with Class Weights
+* **Pipeline:** Albumentations (Flip, Rotate, ColorJitter, CoarseDropout)
+
+---
+
+## 📊 Analysis Framework
+
+This project goes beyond accuracy, implementing a "PhD-level" analysis suite:
+
+### 1. Champion vs. Champion
+
+A head-to-head comparison of the best model from each category (e.g., *SVC vs. EfficientNet vs. MaxViT*).
+
+### 2. Reliability Diagrams (Calibration)
+
+We calculate the **Expected Calibration Error (ECE)** to measure model confidence.
+
+> *Does a 90% confidence prediction actually mean the model is right 90% of the time?*
+
+### 3. Error Analysis
+
+* **Top Confused Pairs:** Quantifying which classes are most frequently mistaken (e.g., Melanoma vs. Nevus).
+* **High Confidence Failures:** Visualizing images where the model was "Wrong but Certain".
 
 ---
 
@@ -286,86 +321,21 @@ The dataset includes comprehensive patient and lesion metadata:
 ```
 📦 MILKFusionNet/
 │
-├── 📂 dataset/                  # Raw data (git-ignored)
-│   ├── 📂 MILK10k_Test_Input/
-│   ├── 📂 MILK10k_Training_Input/
-│   ├── 📄 MILK10k_Test_Metadata.csv
-│   ├── 📄 MILK10k_Training_GroundTruth.csv
-│   └── 📄 MILK10k_Training_Metadata.csv
+├── 📂 dataset/                  # Raw ISIC MILK-10k data
 │
-├── 📂 processed_data/           # Processed tabular data manifests
-│   ├── 📄 train_processed.csv
-│   ├── 📄 test_processed.csv
-│   └── 📄 train_disk_processed.csv # Manifest for on-disk processed images
+├── 📂 notebooks/
+│   └── 📄 main.ipynb            # Single end-to-end pipeline notebook
 │
-├── 📂 processed_images/         # Preprocessed images (git-ignored)
-│   └── 📂 train/
-│       ├── 📂 clinical/
-│       └── 📂 dermoscopic/
+├── 📂 processed_data/           # Cached CSVs for extracted features
+│   ├── 📄 train_color_features.csv
+│   ├── 📄 train_glcm_features.csv
+│   └── ...
 │
-├── 📂 notebooks/                # Contains all Jupyter Notebooks
-│   └── 📄 main.ipynb            # Main notebook for analysis & modeling
+├── 📂 src/                      # (Optional) Modularized scripts
 │
-├── 📂 src/                      # Python source scripts
-│   ├── 📄 dataset.py            # Classes and functions for data loading
-│   ├── 📄 model.py              # Model architecture definitions
-│   └── 📄 utils.py              # Helper functions
-│
-├── 📂 configs/                  # Configuration files (optional)
-│   └── 📄 training_config.yaml
-│
-├── 📄 requirements.txt         # Python dependencies list
-├── 📄 LICENSE                  # Project license
-└── 📄 README.md                # This documentation file
+├── 📄 requirements.txt          # Dependencies (torch, peft, sklearn, etc.)
+└── 📄 README.md                 # This documentation
 ```
-
----
-
-## 🛠️ Methodology
-
-### Preprocessing Pipeline
-
-Our preprocessing strategy is meticulously designed based on empirical analysis:
-
-<table>
-<tr>
-<th width="25%">Technique</th>
-<th width="40%">Rationale</th>
-<th width="35%">Implementation</th>
-</tr>
-
-<tr>
-<td><b>🖼️ Resizing</b></td>
-<td>Standardizes input dimensions for efficient batch processing</td>
-<td><code>Resize(224, 224)</code></td>
-</tr>
-
-<tr>
-<td><b>✨ CLAHE</b></td>
-<td>Adaptive histogram equalization enhances local contrast</td>
-<td><code>CLAHE(clip_limit=3.0)</code></td>
-</tr>
-
-<tr>
-<td><b>🎲 Augmentation</b></td>
-<td>Synthetic data diversity prevents overfitting</td>
-<td><code>HorizontalFlip, Rotate, ColorJitter</code></td>
-</tr>
-
-<tr>
-<td><b>📏 Normalization</b></td>
-<td>Accelerates convergence & stabilizes training</td>
-<td><code>Normalize(ImageNet stats)</code></td>
-</tr>
-</table>
-
-### Training Strategy
-
-- **Loss Function:** Focal Loss (γ=2, α=0.25) for severe class imbalance
-- **Optimizer:** AdamW with weight decay (1e-4)
-- **Scheduler:** ReduceLROnPlateau (patience=5, factor=0.5)
-- **Cross-Validation:** 5-fold stratified CV for robust evaluation
-- **Early Stopping:** Patience of 10 epochs on validation loss
 
 ---
 
@@ -373,57 +343,31 @@ Our preprocessing strategy is meticulously designed based on empirical analysis:
 
 ### Prerequisites
 
-```bash
-Python 3.8+
-PyTorch 2.0+
-CUDA 11.8+ (recommended)
-16GB+ RAM
-```
+* Python 3.8+
+* CUDA-capable GPU (Recommended for LoRA training)
 
 ### Installation
 
-**1. Clone the repository**
 ```bash
+# 1. Clone repository
 git clone https://github.com/username/MILKFusionNet.git
-cd MILKFusionNet
+
+# 2. Install core dependencies
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+pip install scikit-learn pandas numpy matplotlib seaborn tqdm opencv-python
+
+# 3. Install specialized libraries for PEFT and Metrics
+pip install peft torchmetrics albumentations imbalanced-learn
 ```
 
-**2. Create virtual environment**
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
+### Running the Pipeline
 
-**3. Install dependencies**
-```bash
-pip install -r requirements.txt
-```
+The entire workflow is encapsulated in `main.ipynb`. Run the cells sequentially to:
 
-**4. Download dataset**
-- Visit [ISIC MILK-10k Challenge](https://challenge.isic-archive.com/data/#milk10k)
-- Extract files into `dataset/` directory
-
-### Quick Start
-
-**Run the complete pipeline:**
-```bash
-jupyter notebook notebooks/main.ipynb
-```
-
-**Or execute individual components:**
-```python
-from src.dataset import MILKDataset
-from src.model import MILKFusionNet
-
-# Load and preprocess data
-dataset = MILKDataset(root='dataset/', transform=get_transforms())
-
-# Initialize model
-model = MILKFusionNet(num_classes=11)
-
-# Train ensemble
-model.fit(dataset, epochs=50, cv_folds=5)
-```
+1.  Perform EDA and Class Distribution Analysis.
+2.  Extract features and train Classic ML models (SVC, RF, etc.).
+3.  Fine-tune CNNs (ResNet, VGG) and Transformers (ViT, Swin) using LoRA.
+4.  Generate the Grand Final Leaderboard and Analysis plots.
 
 ---
 
