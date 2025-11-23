@@ -100,7 +100,7 @@ We evaluated a total of **22 model configurations**:
 
 The pipeline automatically generates **High-DPI** (300 DPI) visualizations stored in `notebook/image/`, featuring dual-language support (English & Indonesian).
 
-### 1\. Efficiency Analysis (The "PhD" Insight)
+### 1\. Efficiency Analysis
 
 We performed a trade-off analysis between Accuracy and Model Size:
 
