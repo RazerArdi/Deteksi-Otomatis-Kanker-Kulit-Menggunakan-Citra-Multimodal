@@ -75,7 +75,6 @@ graph TD;
 
 We evaluated a total of **22 model configurations**:
 
-
 ### 2. Model Configurations 🤖
 
 We evaluated a total of **22 model configurations** across three distinct paradigms:
