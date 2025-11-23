@@ -75,32 +75,6 @@ graph TD;
 
 We evaluated a total of **22 model configurations**:
 
-You are absolutely right! The **Model Configurations** table needs to include the **Classic Machine Learning** models to accurately reflect the full "22 model" scope of your experiment (3 Classic + 4 CNNs x 3 strategies + 1 Custom + 3 Transformers x 3 strategies = 13 DL models... wait, let's recount to be precise based on your code).
-
-**Let's Recount Exact Models from your Code:**
-
-1.  **Classic ML (Workflow A):**
-    * SVM
-    * Random Forest
-    * XGBoost
-    * *(Typically 3-5 models depending on your specific run, let's list the main ones)*
-
-2.  **CNNs (Workflow B - 10 Models):**
-    * Custom CNN (Scratch)
-    * ResNet50 (Frozen, Full FT, LoRA)
-    * VGG16 (Frozen, Full FT, LoRA)
-    * EfficientNetB0 (Frozen, Full FT, LoRA)
-
-3.  **Transformers (Workflow C - 9 Models):**
-    * ViT (Scratch, Full FT, LoRA)
-    * Swin (Scratch, Full FT, LoRA)
-    * DeiT (Scratch, Full FT, LoRA)
-
-**Total = ~22 Models.**
-
-Here is the corrected **2. Model Configurations** section for your README, including the **Classic ML** row to make it complete.
-
----
 
 ### 2. Model Configurations 🤖
 
