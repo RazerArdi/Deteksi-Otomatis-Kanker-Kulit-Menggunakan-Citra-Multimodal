@@ -4,6 +4,14 @@
 *.jpeg
 *.png
 
+*.csv
+*.txt
+*.pth
+
+# Tapi tetap track file PNG di folder image/
+!Notebook/image/*.png
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
