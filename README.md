@@ -1,16 +1,15 @@
 <div align="center">
 
 # 🔬 MILKFusionNet
-
 ### *Comparative Framework: Classic ML vs. CNNs vs. Transformers with PEFT/LoRA*
 
-![Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge&logo=github)
+![Status](https://img.shields.io/badge/Status-Completed-success?style=for-the-badge&logo=github)
 ![Framework](https://img.shields.io/badge/Framework-PyTorch_%7C_Scikit--Learn-EE4C2C?style=for-the-badge&logo=pytorch)
-![Technique](https://img.shields.io/badge/Technique-LoRA_%7C_Feature_Eng-violet?style=for-the-badge&logo=huggingface)
+![Technique](https://img.shields.io/badge/Technique-LoRA_%7C_Imbalance_Handling-violet?style=for-the-badge&logo=huggingface)
 ![Dataset](https://img.shields.io/badge/Dataset-ISIC%20MILK--10k-00D4FF?style=for-the-badge&logo=kaggle)
 ![Language](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 
-**[Dataset](https://challenge.isic-archive.com/data/#milk10k)** • **[Documentation](#-getting-started)** • **[Methodology](#-methodology)** • **[License](#-license)**
+**[Dataset](https://challenge.isic-archive.com/data/#milk10k)** • **[Methodology](#-methodology)** • **[Results](#-results--benchmarking)** • **[License](#-license)**
 
 </div>
 
@@ -18,414 +17,180 @@
 
 ## 🎯 Overview
 
-**MILKFusionNet** is a robust research framework designed to benchmark and analyze skin lesion classification strategies on the **ISIC MILK-10k** dataset. Moving beyond simple classification, this project rigorously compares three distinct paradigms:
+**MILKFusionNet** is a comprehensive research framework designed to benchmark skin lesion classification strategies on the **ISIC MILK-10k** dataset (11 Diagnostic Categories). Moving beyond simple binary classification, this project rigorously evaluates **22 model variations** across three distinct paradigms:
 
-1.  **Classic Machine Learning:** Interpretable models using hand-crafted feature engineering (RGB, GLCM, HOG, HSV, LBP).
-2.  **Deep Learning (CNNs):** State-of-the-art convolutional networks adapted via **LoRA (Low-Rank Adaptation)**.
-3.  **Vision Transformers:** Modern attention-based architectures adapted via **LoRA (PEFT)**.
+1.  **Classic Machine Learning:** Interpretable baselines using hand-crafted feature engineering (Color, Texture, Shape).
+2.  **Deep Learning (CNNs):** Benchmarking Custom architectures vs. Industry-standard backbones (ResNet, VGG, EfficientNet).
+3.  **Vision Transformers:** Evaluating State-of-the-Art attention mechanisms (ViT, Swin, DeiT).
 
-> **Core Objective:** To evaluate whether modern Parameter-Efficient Fine-Tuning (PEFT) techniques on heavy architectures outperform traditional feature-based learning in scenarios with high class imbalance.
-
----
-
-## 💡 The Challenge
-
-Skin cancer, particularly melanoma, remains a critical global health concern with high mortality rates when diagnosed late. Current diagnostic paradigms face several limitations:
-
-<table>
-<tr>
-<td width="33%" align="center">
-
-### 🎭 Subjectivity
-Heavy reliance on dermatologist experience with limited availability in underserved regions
-
-</td>
-<td width="33%" align="center">
-
-### 📊 Data Imbalance
-Severe class imbalance in medical datasets causing model bias toward common conditions
-
-</td>
-<td width="33%" align="center">
-
-### 🔍 Unimodal Limitations
-Most AI systems analyze single image types, missing contextual clinical information
-
-</td>
-</tr>
-</table>
+> **Core Innovation:** The application of **Low-Rank Adaptation (LoRA)** on both CNN and Transformer architectures to demonstrate that **>99% parameter efficiency** can be achieved without compromising diagnostic accuracy on imbalanced medical datasets.
 
 ---
 
 ## 🏗️ Architecture & Workflows
 
-The project is structured into three parallel experimental workflows:
+The project executes three parallel experimental workflows:
 
 ```mermaid
 graph TD;
-    subgraph "Workflow A: Classic ML"
-        A1[Input Image] --> B1[Preprocessing: Resize + CLAHE];
-        B1 --> C1["Feature Extraction"];
-        C1 --> D1["30 Features: RGB, HSV, GLCM, HOG, LBP"];
-        D1 --> E1["Imbalance Handling: SMOTE / Class Weights"];
-        E1 --> F1["Models: SVC, RF, LogReg, KNN, GNB"];
+    subgraph "Workflow A: Classic ML (Baseline)"
+        A1[Input Image] --> B1[Feature Extraction];
+        B1 --> C1["Features: RGB, HSV, GLCM, HOG, LBP"];
+        C1 --> D1["Imbalance: SMOTE / Class Weights"];
+        D1 --> E1["Models: SVM, Random Forest, XGBoost"];
     end
 
-    subgraph "Workflow B: CNNs (LoRA)"
-        A2["Input Image"] --> B2["Augmentation + Normalization"];
-        B2 --> C2["Backbone: ResNet50 / VGG16 / EfficientNet"];
-        C2 --> D2["Inject LoRA Adapters"];
-        D2 --> F2["Fine-Tuning (Low Rank)"];
+    subgraph "Workflow B: CNNs (Deep Learning)"
+        A2["Input Image (224x224)"] --> B2["Augmentation + Normalization"];
+        B2 --> C2["Architectures: CustomCNN, ResNet50, VGG16, EffNetB0"];
+        C2 --> D2["Strategies: Scratch, Frozen, Full-FT, LoRA"];
+        D2 --> E2["Training (Weighted Loss)"];
     end
 
-    subgraph "Workflow C: Transformers (LoRA)"
-        A3["Input Image"] --> B3["Augmentation + Normalization"];
-        B3 --> C3["Backbone: ViT / Swin / MaxViT"];
-        C3 --> D3["Inject LoRA Adapters"];
-        D3 --> F3["Fine-Tuning (Low Rank)"];
+    subgraph "Workflow C: Vision Transformers"
+        A3["Input Image (224x224)"] --> B3["Augmentation + Normalization"];
+        B3 --> C3["Architectures: ViT-Base, Swin-Tiny, DeiT-Base"];
+        C3 --> D3["Strategies: Scratch, Full-FT, LoRA"];
+        D3 --> E3["Training (Weighted Loss)"];
     end
 
-    F1 & F2 & F3 --> G["🏆 Grand Final Analysis"];
-    G --> H["Confusion Matrix & ECE Calibration"];
-```
+    E1 & E2 & E3 --> F["🏆 Grand Final Analysis"];
+    F --> G["Efficiency Plots (Acc vs Params) & Dual-Lang Posters"];
+````
 
----
+-----
 
 ## 🛠️ Methodology
 
-### 1. Workflow A: Classic Feature Engineering 🧑‍🔬
+### 1\. Dataset & Preprocessing 🖼️
 
-Instead of raw pixels, we extract interpretable dermoscopic features to train lightweight classifiers.
+  * **Dataset:** ISIC Archive MILK-10k (11 Classes: Melanoma, Nevus, BCC, etc.).
+  * **Preprocessing:** Resize (224x224), Normalization (ImageNet Mean/Std).
+  * **Augmentation:** Random Horizontal/Vertical Flip, Rotation (20°), Color Jitter.
+  * **Imbalance Handling:**
+      * *Classic ML:* SMOTE Oversampling.
+      * *Deep Learning:* **Weighted Cross-Entropy Loss** (Calculated based on inverse class frequency).
 
-| Feature Set | Count | Description |
-|:---|:---:|:---|
-| **Color (RGB)** | 12 | Mean, Std, Skew, Kurtosis per channel |
-| **Color (HSV)** | 6 | Mean, Std for Hue, Saturation, Value |
-| **Texture (GLCM)** | 6 | Contrast, Correlation, Energy, Homogeneity, ASM, Dissimilarity |
-| **Texture (LBP)** | 3 | Local Binary Patterns (Micro-texture) statistics |
-| **Shape (HOG)** | 3 | Histogram of Oriented Gradients statistics |
-| **Total** | **30** | Standardized features |
+### 2\. Model Configurations 🤖
 
-* **Handling Imbalance:** Comparative study between `Class Weights` and `SMOTE` (Synthetic Minority Over-sampling).
+We evaluated a total of **22 model configurations**:
 
-### 2. Workflows B & C: Deep Learning with PEFT 🚀
+| Category | Architecture | Training Strategies | Technical Details |
+|:---|:---|:---|:---|
+| **CNN** | **CustomVanillaCNN** | Scratch | Lightweight Baseline (3 Conv Blocks) |
+| **CNN** | **ResNet50** | Frozen, Full FT, **LoRA** | LoRA Target: `layerX.conv2` |
+| **CNN** | **VGG16** | Frozen, Full FT, **LoRA** | LoRA Target: `features` blocks |
+| **CNN** | **EfficientNet-B0** | Frozen, Full FT, **LoRA** | LoRA Target: `MBConv` expansion layers |
+| **Transformer** | **ViT-Base** | Scratch, Full FT, **LoRA** | LoRA Target: `query`, `value` |
+| **Transformer** | **Swin-Tiny** | Scratch, Full FT, **LoRA** | Hierarchical Window Attention |
+| **Transformer** | **DeiT-Base** | Scratch, Full FT, **LoRA** | Distilled Knowledge (Replaces MaxViT) |
 
-We utilize **LoRA (Low-Rank Adaptation)** to fine-tune massive pre-trained models efficiently. By freezing the pre-trained backbone and only training rank-decomposition matrices, we reduce trainable parameters by >90% while preventing catastrophic forgetting.
+### 3\. Training Setup ⚙️
 
-| Architecture Type | Models Evaluated | Technique |
-|:---|:---|:---|
-| **CNN** | ResNet-50, VGG-16, EfficientNet-B0 | LoRA on Conv/Linear layers |
-| **Transformer** | ViT-B/16, Swin-T, MaxViT-T | LoRA on Attention (qkv) & MLP |
+  * **Framework:** PyTorch, Hugging Face `transformers`, `peft`.
+  * **Optimizer:** `AdamW` (Weight Decay 0.01).
+  * **Learning Rate:** `1e-4` (CNN), `2e-5` (Transformers).
+  * **Epochs:** 10 (with validation per epoch).
+  * **Batch Size:** 32 (Optimized for stability).
+  * **Memory Management:** Automated CPU-offloading post-training to prevent GPU OOM.
 
-**Training Config:**
+-----
 
-* **Optimizer:** Adam (CNN) / AdamW (Transformer)
-* **Loss:** CrossEntropyLoss with Class Weights
-* **Pipeline:** Albumentations (Flip, Rotate, ColorJitter, CoarseDropout)
+## 📊 Results & Benchmarking
 
----
+The pipeline automatically generates **High-DPI** (300 DPI) visualizations stored in `notebook/image/`, featuring dual-language support (English & Indonesian).
 
-## 📊 Analysis Framework
+### 1\. Efficiency Analysis (The "PhD" Insight)
 
-This project goes beyond accuracy, implementing a "PhD-level" analysis suite:
+We performed a trade-off analysis between Accuracy and Model Size:
 
-### 1. Champion vs. Champion
+  * **Scatter Plot:** Visualizes models in the "High Accuracy - Low Params" quadrant.
+  * **Bar Chart (Log Scale):** Demonstrates the extreme parameter reduction achieved by LoRA (from \~86 Million to \~300 Thousand trainable parameters).
 
-A head-to-head comparison of the best model from each category (e.g., *SVC vs. EfficientNet vs. MaxViT*).
+### 2\. Key Visualizations
 
-### 2. Reliability Diagrams (Calibration)
+  * **Training Dynamics:** Loss/Accuracy curves per epoch comparing DL models against the Classic ML baseline.
+  * **Confusion Matrix:** Heatmaps identifying specific inter-class confusion (e.g., differentiating *Melanoma* from *Nevus*).
+  * **Leaderboard:** Horizontal bar charts ranking all 22 models based on Validation Accuracy.
 
-We calculate the **Expected Calibration Error (ECE)** to measure model confidence.
-
-> *Does a 90% confidence prediction actually mean the model is right 90% of the time?*
-
-### 3. Error Analysis
-
-* **Top Confused Pairs:** Quantifying which classes are most frequently mistaken (e.g., Melanoma vs. Nevus).
-* **High Confidence Failures:** Visualizing images where the model was "Wrong but Certain".
-
----
-
-## 📊 Dataset Overview
-
-### ISIC MILK-10k Dataset
-
-The **MILK-10k (Metadata-Informed Lesion Knowledge)** dataset is a comprehensive multimodal collection for skin lesion classification, containing over 10,000 cases with rich metadata and dual imaging modalities.
-
-<details>
-<summary><b>🗂️ Dataset Statistics & Distribution</b></summary>
-
-<br>
-
-#### Dataset Composition
-
-| Split | Total Cases | Dermoscopic Images | Clinical Images | Metadata Records |
-|:------|:------------|:-------------------|:----------------|:-----------------|
-| **Training** | ~8,000 | ✅ Available | ✅ Available | ✅ Complete |
-| **Testing** | ~2,000 | ✅ Available | ✅ Available | ✅ Complete |
-| **Total** | **~10,000** | **10,000+** | **10,000+** | **10,000+** |
-
-</details>
-
-<details>
-<summary><b>🎯 Class Distribution (11 Diagnostic Categories)</b></summary>
-
-<br>
-
-The dataset includes 11 distinct skin lesion types with varying prevalence:
-
-| Class | Diagnosis | Abbr. | Approx. Samples | Severity | Description |
-|:-----:|:----------|:------|:----------------|:---------|:------------|
-| **0** | Actinic Keratosis | AK | ~600 | ⚠️ Pre-cancerous | Rough, scaly patches from sun exposure |
-| **1** | Basal Cell Carcinoma | BCC | ~900 | 🔴 Malignant | Most common skin cancer, slow-growing |
-| **2** | Benign Keratosis | BKL | ~1,200 | 🟢 Benign | Harmless skin growths (seborrheic keratosis) |
-| **3** | Dermatofibroma | DF | ~400 | 🟢 Benign | Firm nodular skin lesions |
-| **4** | Melanoma | MEL | ~800 | 🔴 Highly Malignant | Deadliest skin cancer, requires urgent care |
-| **5** | Melanocytic Nevus | NV | ~3,500 | 🟢 Benign | Common moles, most prevalent class |
-| **6** | Squamous Cell Carcinoma | SCC | ~700 | 🔴 Malignant | Second most common skin cancer |
-| **7** | Vascular Lesion | VASC | ~350 | 🟢 Benign | Blood vessel abnormalities (hemangiomas) |
-| **8** | Acral Lentiginous Melanoma | ALM | ~150 | 🔴 Highly Malignant | Rare melanoma subtype on extremities |
-| **9** | Lentigo Maligna | LM | ~200 | ⚠️ Pre-cancerous | Early melanoma on sun-damaged skin |
-| **10** | Merkel Cell Carcinoma | MCC | ~50 | 🔴 Highly Malignant | Rare aggressive neuroendocrine tumor |
-
-**Class Imbalance Ratio:** ~70:1 (Most common: NV | Rarest: MCC)
-
-> 📌 **Note:** This severe imbalance motivates our use of Focal Loss and ensemble strategies to prevent model bias toward common benign lesions.
-
-</details>
-
-<details>
-<summary><b>🖼️ Image Modalities & Specifications</b></summary>
-
-<br>
-
-#### Dermoscopic Images
-- **Purpose:** High-magnification surface analysis revealing subsurface structures
-- **Equipment:** Dermatoscope with polarized/non-polarized light
-- **Resolution:** Variable (typically 1024×768 to 6000×4000 pixels)
-- **Format:** JPEG
-- **Key Features:** Reveals pigment networks, globules, streaks, blue-white veil
-- **Clinical Value:** Gold standard for melanoma screening
-
-#### Clinical Images  
-- **Purpose:** Contextual macro-view of lesion and surrounding skin
-- **Equipment:** Standard digital camera
-- **Resolution:** Variable (typically 1024×768 to 4000×3000 pixels)
-- **Format:** JPEG
-- **Key Features:** Shows lesion size, borders, surrounding erythema
-- **Clinical Value:** Provides anatomical context and scale reference
-
-#### Image Characteristics
-| Aspect | Dermoscopic | Clinical |
-|:-------|:------------|:---------|
-| **Magnification** | 10-70× | 1× (macro) |
-| **Field of View** | Lesion-focused | Wide anatomical context |
-| **Lighting** | Controlled polarized | Natural/flash |
-| **Diagnostic Use** | Structural analysis | Overall assessment |
-
-</details>
-
-<details>
-<summary><b>📋 Tabular Metadata Attributes</b></summary>
-
-<br>
-
-The dataset includes comprehensive patient and lesion metadata:
-
-#### Patient Demographics
-| Attribute | Type | Description | Example Values |
-|:----------|:-----|:------------|:---------------|
-| `age_approx` | Integer | Patient age (years) | 25, 45, 67, 82 |
-| `sex` | Categorical | Biological sex | male, female |
-| `anatom_site_general` | Categorical | Body location | torso, lower extremity, upper extremity, head/neck, palms/soles, oral/genital |
-
-#### Lesion Characteristics
-| Attribute | Type | Description | Clinical Significance |
-|:----------|:-----|:------------|:---------------------|
-| `tbp_lv_A` | Float | Total body photography lesion area | Size indicator |
-| `tbp_lv_Aext` | Float | Extended lesion area | Growth assessment |
-| `tbp_lv_B` | Float | Border irregularity score | Higher = more irregular |
-| `tbp_lv_C` | Float | Color variation index | Multicolor lesions |
-| `tbp_lv_H` | Float | Hue homogeneity | Color distribution |
-| `tbp_lv_Hext` | Float | Extended hue metrics | Advanced color analysis |
-| `tbp_lv_L` | Float | Lightness/luminance | Brightness assessment |
-| `tbp_lv_Lext` | Float | Extended lightness | Pigmentation depth |
-| `tbp_lv_nevi_confidence` | Float | Confidence score for nevus | AI pre-screening score |
-| `tbp_lv_norm_border` | Float | Normalized border score | Standardized irregularity |
-| `tbp_lv_norm_color` | Float | Normalized color variance | Standardized color metric |
-| `tbp_lv_perimeterMM` | Float | Lesion perimeter (mm) | Physical boundary size |
-| `tbp_lv_areaMM2` | Float | Lesion area (mm²) | Physical size measurement |
-| `tbp_lv_x` | Integer | X-coordinate on body map | Spatial localization |
-| `tbp_lv_y` | Integer | Y-coordinate on body map | Spatial localization |
-| `tbp_lv_z` | Integer | Z-coordinate (depth) | 3D positioning |
-
-#### Derived Features
-| Feature | Calculation | Clinical Relevance |
-|:--------|:------------|:-------------------|
-| `asymmetry_score` | Computed from A/B metrics | ABCDE rule (Asymmetry) |
-| `border_score` | `tbp_lv_B + tbp_lv_norm_border` | ABCDE rule (Border) |
-| `color_diversity` | `tbp_lv_C + tbp_lv_norm_color` | ABCDE rule (Color) |
-| `diameter_mm` | `√(areaMM2/π) × 2` | ABCDE rule (Diameter) |
-
-> 🏥 **ABCDE Rule:** Clinical mnemonic for melanoma detection (Asymmetry, Border, Color, Diameter, Evolution)
-
-#### Missing Data Handling
-- **Age:** Imputed with median age by sex and diagnosis
-- **Location:** Imputed with mode (most common anatomical site)
-- **Numeric Features:** KNN imputation (k=5) based on similar lesions
-- **Missing Rate:** <5% for most attributes, <15% overall
-
-</details>
-
-<details>
-<summary><b>🔬 Data Quality & Preprocessing Pipeline</b></summary>
-
-<br>
-
-#### Quality Assurance
-- ✅ All images manually reviewed by certified dermatologists
-- ✅ Multiple expert consensus for melanoma cases
-- ✅ Standardized imaging protocols across collection sites
-- ✅ Duplicate detection and removal
-- ✅ Artifact filtering (rulers, hair, bubbles)
-
-#### Preprocessing Steps
-```python
-# Image Pipeline
-1. Resize to 224×224 pixels (efficient computation)
-2. CLAHE enhancement (clip_limit=3.0)
-3. Hair removal algorithm (optional)
-4. Color normalization (Reinhard method)
-5. Augmentation (rotation, flip, color jitter)
-6. Normalization (ImageNet statistics)
-
-# Metadata Pipeline  
-1. Outlier detection (IQR method)
-2. Missing value imputation
-3. Feature scaling (StandardScaler)
-4. Categorical encoding (Label/One-Hot)
-5. Feature engineering (ABCDE scores)
-```
-
-#### Data Splits
-- **Stratified Split:** Maintains class distribution across train/val/test
-- **Cross-Validation:** 5-fold stratified for robust evaluation
-- **Patient-Level Split:** No data leakage (same patient not in train/test)
-
-</details>
-
----
+-----
 
 ## 📂 Project Structure
 
-```
-📦 MILKFusionNet/
+The repository is structured as follows:
+
+```bash
+MILKFusionNet/
+├── 📂 dataset/                  # Raw ISIC data (Train/Test splits)
 │
-├── 📂 dataset/                  # Raw ISIC MILK-10k data
+├── 📂 Models/                   # 💾 Saved Model Weights (.pth)
+│   ├── CustomCNN_Scratch.pth
+│   ├── ResNet50_LoRA.pth
+│   ├── DeiT_LoRA.pth
+│   └── ... (All 22 models)
 │
-├── 📂 notebooks/
-│   └── 📄 main.ipynb            # Single end-to-end pipeline notebook
+├── 📂 notebook/                 # 📓 Main Experiment Environment
+│   ├── main.ipynb               # End-to-End Pipeline Code
+│   ├── poster_table_results.csv # Raw results data
+│   │
+│   └── 📂 image/                # 🖼️ GENERATED OUTPUTS (High-Res)
+│       ├── all_model_results.csv
+│       ├── Fig1_Data_Distribution_English.png
+│       ├── Fig2_Training_Dynamics_English.png
+│       ├── Fig5_Parameter_Efficiency_English.png
+│       ├── Fig6_Accuracy_vs_Params_English.png
+│       └── ... (Confusion Matrices for every model)
 │
-├── 📂 processed_data/           # Cached CSVs for extracted features
-│   ├── 📄 train_color_features.csv
-│   ├── 📄 train_glcm_features.csv
-│   └── ...
-│
-├── 📂 src/                      # (Optional) Modularized scripts
-│
-├── 📄 requirements.txt          # Dependencies (torch, peft, sklearn, etc.)
+├── 📂 processed_data/           # Intermediate files (Efficiency stats)
+├── 📄 requirements.txt          # Project dependencies
 └── 📄 README.md                 # This documentation
 ```
 
----
+-----
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-* Python 3.8+
-* CUDA-capable GPU (Recommended for LoRA training)
-
-### Installation
+Ensure your environment supports CUDA (GPU recommended for Transformers).
 
 ```bash
-# 1. Clone repository
-git clone https://github.com/username/MILKFusionNet.git
+# Install core libraries
+pip install torch torchvision torchaudio --index-url [https://download.pytorch.org/whl/cu118](https://download.pytorch.org/whl/cu118)
 
-# 2. Install core dependencies
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-pip install scikit-learn pandas numpy matplotlib seaborn tqdm opencv-python
-
-# 3. Install specialized libraries for PEFT and Metrics
-pip install peft torchmetrics albumentations imbalanced-learn
+# Install specific research tools
+pip install transformers peft scikit-learn pandas matplotlib seaborn opencv-python tqdm imbalanced-learn
 ```
 
-### Running the Pipeline
+### Execution Guide
 
-The entire workflow is encapsulated in `main.ipynb`. Run the cells sequentially to:
+Run the `notebook/main.ipynb` cells sequentially:
 
-1.  Perform EDA and Class Distribution Analysis.
-2.  Extract features and train Classic ML models (SVC, RF, etc.).
-3.  Fine-tune CNNs (ResNet, VGG) and Transformers (ViT, Swin) using LoRA.
-4.  Generate the Grand Final Leaderboard and Analysis plots.
+1.  **Data Prep:** Load dataset, perform stratified splitting, and apply augmentation.
+2.  **Workflow A:** Feature extraction & Classic ML training.
+3.  **Workflow B:** CNN Factory setup & Training Loop (10 Models).
+4.  **Workflow C:** Transformer Factory setup & Training Loop (9 Models).
+5.  **Grand Final:** Execute the final visualization cells to generate posters and CSVs.
 
----
-
-## 📊 Expected Results
-
-| Metric | Target | Clinical Significance |
-|:-------|:------:|:---------------------|
-| **Accuracy** | >85% | Overall diagnostic precision |
-| **Balanced Accuracy** | >80% | Performance across rare classes |
-| **Sensitivity (Melanoma)** | >90% | Critical for early cancer detection |
-| **Specificity** | >88% | Reduces false positive burden |
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please follow these guidelines:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
----
+-----
 
 ## 👨‍🔬 Author
 
 **Bayu Ardiyansyah**
 
-[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github)](https://github.com/username)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/username)
-[![Email](https://img.shields.io/badge/Email-EA4335?style=for-the-badge&logo=gmail&logoColor=white)](mailto:your.email@example.com)
+  * **Focus:** Medical Image Analysis, Deep Learning, Computer Vision.
+  * **Tech Stack:** PyTorch, Scikit-Learn, Hugging Face.
 
----
+-----
 
 ## 📜 License
 
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT License** - see the [LICENSE](https://www.google.com/search?q=LICENSE) file for details.
 
----
+-----
 
-## ⚠️ Disclaimer
+<div align="center"\>
 
-<div align="center">
+> **Disclaimer:** MILKFusionNet is a research prototype. Predictions should not replace professional medical diagnosis.
 
-> **IMPORTANT:** MILKFusionNet is a research prototype and **NOT** a certified medical diagnostic tool. 
-> 
-> All predictions must be validated by qualified healthcare professionals. This system is designed to augment, not replace, clinical expertise.
-
-</div>
-
----
-
-<div align="center">
-
-### 🌟 If you find this project useful, please consider giving it a star!
-
-**Made with ❤️ for advancing healthcare AI**
-
-</div>
+**⭐ Star this repository if you find it useful for your research\!**
