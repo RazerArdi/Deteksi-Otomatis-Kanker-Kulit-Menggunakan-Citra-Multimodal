@@ -1,3 +1,4 @@
+
 <div align="center">
 
 # 🔬 MILKFusionNet
@@ -73,10 +74,6 @@ graph TD;
 
 ### 2\. Model Configurations 🤖
 
-We evaluated a total of **22 model configurations**:
-
-### 2. Model Configurations 🤖
-
 We evaluated a total of **22 model configurations** across three distinct paradigms:
 
 | Category | Architecture | Training Strategies | Technical Details |
@@ -90,14 +87,45 @@ We evaluated a total of **22 model configurations** across three distinct paradi
 | **Transformer** | **Swin-Tiny** | Scratch, Full FT, **LoRA** | Hierarchical Window Attention |
 | **Transformer** | **DeiT-Base** | Scratch, Full FT, **LoRA** | Distilled Knowledge (Replaces MaxViT) |
 
-### 3\. Training Setup ⚙️
+### 3. Experimental Setup & Hyperparameters ⚙️
 
-  * **Framework:** PyTorch, Hugging Face `transformers`, `peft`.
-  * **Optimizer:** `AdamW` (Weight Decay 0.01).
-  * **Learning Rate:** `1e-4` (CNN), `2e-5` (Transformers).
-  * **Epochs:** 10 (with validation per epoch).
-  * **Batch Size:** 32 (Optimized for stability).
-  * **Memory Management:** Automated CPU-offloading post-training to prevent GPU OOM.
+To ensure reproducibility, all 22 models were trained using a unified hyperparameter configuration. We established strict "apple-to-apple" comparison protocols between CNNs and Transformers.
+
+#### A. Global Configurations
+| Parameter | Value | Description |
+| :--- | :--- | :--- |
+| **Image Size** | `224 x 224` | Standard ImageNet resolution |
+| **Batch Size** | `32` | Optimized for 16GB VRAM GPU |
+| **Epochs** | `10` | Early stopping monitored on Validation Loss |
+| **Loss Function** | `Weighted CrossEntropy` | Weights calculated via inverse class frequency |
+| **Num Workers** | `0` | Set for Windows/Jupyter environment stability |
+| **Seed** | `42` | Fixed for reproducibility |
+
+#### B. Architecture-Specific Settings
+We utilized distinct optimizers and learning rates tailored to the inductive bias of each architecture family:
+
+| Hyperparameter | CNNs (ResNet/VGG/EffNet) | Transformers (ViT/Swin/DeiT) |
+| :--- | :--- | :--- |
+| **Optimizer** | `Adam` | `AdamW` (Crucial for attention mechanisms) |
+| **Learning Rate** | `1e-4` (0.0001) | `2e-5` (0.00002) - *Lower for stability* |
+| **Weight Decay** | `1e-2` | `1e-2` |
+| **LR Scheduler** | ReduceLROnPlateau | Cosine Annealing |
+
+#### C. LoRA (PEFT) Configuration
+For models using Low-Rank Adaptation, we froze the backbone and injected trainable rank decomposition matrices with the following specs:
+
+| Parameter | Setting | Impact |
+| :--- | :--- | :--- |
+| **Rank (r)** | `16` | The "sweet spot" balancing efficiency and capacity |
+| **Alpha** | `32` | Scaling factor (typically 2x Rank) |
+| **Dropout** | `0.1` | Regularization for adapters |
+| **Bias** | `None` | Biases are not trained to save memory |
+| **Target Modules** | **CNN:** `conv` layers<br>**ViT/DeiT:** `query`, `value`<br>**Swin:** `q`, `v` (Attention) | Specific injection points per architecture |
+
+#### D. Classic ML Setup (Stream 1)
+* **Feature Extraction:** 30 handcrafted features (12 RGB + 6 HSV + 6 GLCM + 3 HOG + 3 LBP).
+* **Imbalance Handling:** SMOTE (Synthetic Minority Over-sampling Technique).
+* **Classifiers:** SVM (RBF Kernel), Random Forest (n=100), XGBoost.
 
 -----
 
@@ -105,7 +133,7 @@ We evaluated a total of **22 model configurations** across three distinct paradi
 
 The pipeline automatically generates **High-DPI** (300 DPI) visualizations stored in `notebook/image/`, featuring dual-language support (English & Indonesian).
 
-### 1\. Efficiency Analysis
+### 1\. Efficiency Analysis (The "PhD" Insight)
 
 We performed a trade-off analysis between Accuracy and Model Size:
 
@@ -194,8 +222,10 @@ This project is licensed under the **MIT License** - see the [LICENSE](https://w
 
 -----
 
-<div align="center"\>
+<div align="center">
 
 > **Disclaimer:** MILKFusionNet is a research prototype. Predictions should not replace professional medical diagnosis.
 
 **⭐ Star this repository if you find it useful for your research\!**
+
+</div>
