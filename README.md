@@ -133,7 +133,7 @@ For models using Low-Rank Adaptation, we froze the backbone and injected trainab
 
 The pipeline automatically generates **High-DPI** (300 DPI) visualizations stored in `notebook/image/`, featuring dual-language support (English & Indonesian).
 
-### 1\. Efficiency Analysis (The "PhD" Insight)
+### 1\. Efficiency Analysis
 
 We performed a trade-off analysis between Accuracy and Model Size:
 
